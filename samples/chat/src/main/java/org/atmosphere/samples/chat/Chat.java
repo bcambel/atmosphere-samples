@@ -74,16 +74,6 @@ public class Chat extends AtmosphereHandlerAdapter{
         logger.info("Broadcaster injected {}", broadcaster.getID());
 
     }
-    @Override
-    public void onRequest(AtmosphereResource resource) throws IOException {
-        AtmosphereRequest request = resource.getRequest();
-        logger.info(request.getPathInfo());
-        logger.info(request.getRequestURI());
-        String headerVal = request.getHeader("Authorization");
-        logger.info("Header value {}", headerVal);
-        logger.trace("onRequest {}", resource.uuid());
-    }
-
     /**
      * Invoked when the client disconnects or when the underlying connection is closed unexpectedly.
      *
@@ -110,18 +100,21 @@ public class Chat extends AtmosphereHandlerAdapter{
         AtmosphereRequest request = r.getRequest();
         String headerVal = request.getHeader("Authorization");
         logger.info("Authorization value {}", headerVal);
+        logger.info("`{}` said: {}", message.getSenderId(), message.getPushMessage());
 
-        if(headerVal != null && headerVal.startsWith("Bearer ")){
+        String method = request.getMethod();
+
+        if(method == "POST" && headerVal != null && headerVal.startsWith("Bearer ")) {
             String[] auth_parts = headerVal.split("Bearer ");
             String uuid = auth_parts[1];
-            if(uuid.equals(message.getSenderId())){
-                logger.info("Matched!");
-            }else{
-                logger.info("Liar request. {} != {}", uuid, message.getSenderId());
+            if (uuid.equals(message.getSenderId())) {
+                logger.info("Matched! Forwarding to other chat clients");
+                return message;
+            } else {
+                logger.info("Liar request. Deny Reason:{} != {}", uuid, message.getSenderId());
+                return null;
             }
         }
-
-        logger.info("{} just sent {}", message.getSenderId(), message.getPushMessage());
         return message;
     }
 
