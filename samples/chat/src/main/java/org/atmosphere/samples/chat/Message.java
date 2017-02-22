@@ -20,15 +20,15 @@ import java.util.Date;
 public class Message {
 
     private String message;
-    private String author;
+    private String uuid;
     private long time;
 
     public Message() {
         this("", "");
     }
 
-    public Message(String author, String message) {
-        this.author = author;
+    public Message(String uuid, String message) {
+        this.uuid = uuid;
         this.message = message;
         this.time = new Date().getTime();
     }
@@ -37,12 +37,12 @@ public class Message {
         return message;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setMessage(String message) {

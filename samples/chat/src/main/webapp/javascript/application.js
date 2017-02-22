@@ -69,7 +69,7 @@ $(function () {
         } else {
             var me = json.author == author;
             var date = typeof(json.time) == 'string' ? parseInt(json.time) : json.time;
-            addMessage(json.author, json.message, me ? 'blue' : 'black', new Date(date));
+            addMessage(json.uuid, json.message, me ? 'blue' : 'black', new Date(date));
         }
     };
 
@@ -103,7 +103,7 @@ $(function () {
                 author = msg;
             }
 
-            subSocket.push(atmosphere.util.stringifyJSON({ author: author, message: msg }));
+            subSocket.push(atmosphere.util.stringifyJSON({ uuid: author, message: msg }));
             $(this).val('');
 
             input.attr('disabled', 'disabled');

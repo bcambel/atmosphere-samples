@@ -15,14 +15,9 @@
  */
 package org.atmosphere.samples.chat;
 
-import org.atmosphere.config.service.Disconnect;
-import org.atmosphere.config.service.Heartbeat;
-import org.atmosphere.config.service.ManagedService;
-import org.atmosphere.config.service.Ready;
-import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereResourceEvent;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.cpr.BroadcasterFactory;
+import org.atmosphere.config.service.*;
+import org.atmosphere.cpr.*;
+import org.atmosphere.handler.AtmosphereHandlerAdapter;
 import org.atmosphere.samples.chat.custom.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +30,11 @@ import static org.atmosphere.cpr.ApplicationConfig.MAX_INACTIVE;
 
 /**
  * Simple annotated class that demonstrate the power of Atmosphere. This class supports all transports, support
- * message length garantee, heart beat, message cache thanks to the {@link ManagedService}.
+ * message length guarantee, heart beat, message cache thanks to the {@link ManagedService}.
  */
 @Config
 @ManagedService(path = "/chat", atmosphereConfig = MAX_INACTIVE + "=120000")
-public class Chat {
+public class Chat extends AtmosphereHandlerAdapter{
     private final Logger logger = LoggerFactory.getLogger(Chat.class);
 
 // Uncomment for changing response's state
@@ -79,6 +74,15 @@ public class Chat {
         logger.info("Broadcaster injected {}", broadcaster.getID());
 
     }
+    @Override
+    public void onRequest(AtmosphereResource resource) throws IOException {
+        AtmosphereRequest request = resource.getRequest();
+        logger.info(request.getPathInfo());
+        logger.info(request.getRequestURI());
+        String headerVal = request.getHeader("Authorization");
+        logger.info("Header value {}", headerVal);
+        logger.trace("onRequest {}", resource.uuid());
+    }
 
     /**
      * Invoked when the client disconnects or when the underlying connection is closed unexpectedly.
@@ -103,7 +107,10 @@ public class Chat {
      */
     @org.atmosphere.config.service.Message(encoders = {JacksonEncoder.class}, decoders = {JacksonDecoder.class})
     public Message onMessage(Message message) throws IOException {
-        logger.info("{} just sent {}", message.getAuthor(), message.getMessage());
+        AtmosphereRequest request = r.getRequest();
+        String headerVal = request.getHeader("Authorization");
+        logger.info("Header value123 {}", headerVal);
+        logger.info("{} just sent {}", message.getUuid(), message.getMessage());
         return message;
     }
 
