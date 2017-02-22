@@ -109,8 +109,19 @@ public class Chat extends AtmosphereHandlerAdapter{
     public Message onMessage(Message message) throws IOException {
         AtmosphereRequest request = r.getRequest();
         String headerVal = request.getHeader("Authorization");
-        logger.info("Header value123 {}", headerVal);
-        logger.info("{} just sent {}", message.getUuid(), message.getMessage());
+        logger.info("Authorization value {}", headerVal);
+
+        if(headerVal != null && headerVal.startsWith("Bearer ")){
+            String[] auth_parts = headerVal.split("Bearer ");
+            String uuid = auth_parts[1];
+            if(uuid.equals(message.getSenderId())){
+                logger.info("Matched!");
+            }else{
+                logger.info("Liar request. {} != {}", uuid, message.getSenderId());
+            }
+        }
+
+        logger.info("{} just sent {}", message.getSenderId(), message.getPushMessage());
         return message;
     }
 

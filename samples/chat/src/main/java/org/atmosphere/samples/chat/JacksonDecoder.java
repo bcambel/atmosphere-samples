@@ -16,7 +16,10 @@
 package org.atmosphere.samples.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.atmosphere.config.managed.Decoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -25,12 +28,16 @@ import java.io.IOException;
  * Decode a String into a {@link Message}.
  */
 public class JacksonDecoder implements Decoder<String, Message> {
+    private final Logger logger = LoggerFactory.getLogger(JacksonDecoder.class);
 
     @Inject
     private ObjectMapper mapper;
 
     @Override
     public Message decode(String s) {
+        this.mapper.setPropertyNamingStrategy(
+                PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+        logger.info("Received {}", s);
         try {
             return mapper.readValue(s, Message.class);
         } catch (IOException e) {

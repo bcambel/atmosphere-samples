@@ -19,34 +19,34 @@ import java.util.Date;
 
 public class Message {
 
-    private String message;
-    private String uuid;
+    private String pushMessage;
+    private String senderId;
     private long time;
 
     public Message() {
         this("", "");
     }
 
-    public Message(String uuid, String message) {
-        this.uuid = uuid;
-        this.message = message;
+    public Message(String senderId, String pushMessage) {
+        this.senderId = senderId;
+        this.pushMessage = pushMessage;
         this.time = new Date().getTime();
     }
 
-    public String getMessage() {
-        return message;
+    public String getPushMessage() {
+        return pushMessage;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setUuid(String senderId) {
+        this.senderId = senderId;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String pushMessage) {
+        this.pushMessage = pushMessage;
     }
 
     public long getTime() {
